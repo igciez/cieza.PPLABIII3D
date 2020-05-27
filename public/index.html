@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="./css/index.css">
+    <!-- <script src="./js/index.js" defer type="module"></script> -->
+    <script src="./js/index.js" defer></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <header class="header">
+        <img src="./img/logo.png" alt="no imagen" class="header__img">
+        <nav class="header__nav">
+            <span class="header__nav-text"> Nosotros </span>
+            <span class="header__nav-text"> Anuncios </span>
+            <span class="header__nav-text"> Blog </span>
+            <span class="header__nav-text"> Contacto </span>
+        </nav>
+    </header>
+    <div class="content">
+        <img src="./img/208.gif" class="content__gif" id="gif" alt='no gif' />
+        <span class="content__title">Administración</span>
+        <img src="./img/imagenAuto.png" alt="no imagen" class="content__imagen" />
+        <form class="content__form" id='form' onsubmit="guardar(event)">
+            <fieldset class="content__form-fieldset">
+                <legend class="content__form-legend">Información del Anuncio</legend>
+                <div class="content__form-box">
+                    <label class="content__form-label">TITULO</label>
+                    <input class="content__form-input" name="titulo" type="text" id="titulo" placeholder="Título"
+                        required />
+                    <label class="content__form-label">TRANSACCION:</label>
+                    <select class="content__form-transaccion" name="transaccion" id="transaccion" required>
+                        <option value="" disabled selected>---Elegir Transacción---</option>
+                        <option value="venta" id="venta">Venta</option>
+                        <option value="alquiler" id="alquiler">Alquiler</option>
+                        <option value="permuta" id="permuta">Permuta</option>
+                    </select>
+                    <label class="content__form-label">DESCRIPCION</label>
+                    <input class="content__form-input" name="titulo" type="text" id="descripcion"
+                        placeholder="Descripción" required />
+                    <label class="content__form-label">PRECIO:</label>
+                    <input class="content__form-input" name='precio' type="text" id="precio" placeholder="Precio"
+                        required />
+                    <div class="content__form-boxs">
+                        <img src='./img//puerta.png' alt="no imagen" class="content__form-boxs-img" />
+                        <input class="content__form-input" type="number" name="puertas" min="1" max="5" id="puertas"
+                            placeholder="Puertas" required>
+                        <img src="./img/velocimetro.png" alt="no imagen" class="content__form-boxs-img" />
+                        <input class="content__form-input" type="number" name="kms" min="1" id="kms"
+                            placeholder="Kms" required>
+                        <img src="./img/potencia.jpg" alt="no imagen" class="content__form-boxs-img" />
+                        <input class="content__form-input" type="number" name="potencia" min="1" id="potencia"
+                            placeholder="Potencia" required>
+                    </div>
+                </div>
+            </fieldset>
+            <button class="content__button-guardar" type="submit">
+                <img src="./img/guardar.png" alt="no imagen" class="content__button-guardar-ico">
+                Guardar
+            </button>
+        </form>
+        <div class="content__table">
+            <table id='table'>
+                <tr class="content__table-tr">
+                    <th>Id</th>
+                    <th>Título</th>
+                    <th>Transacción</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Numero Puertas</th>
+                    <th>Numero Kms</th>
+                    <th>Potencia</th>
+                </tr>
+                <template>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </template>
+            </table>
+            <div class="content__box-buttons" id='box-buttons'>
+                <button class="content__box-buttons-editar" onclick="editar()">Editar</button>
+                <button class="content__box-buttons-eliminar" onclick="borrar()">Eliminar</button>
+                <button class="content__box-buttons-cancelar" onclick="cancelar()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <nav class="footer__nav">
+            <span class="footer__nav-text"> Nosotros </span>
+            <span class="footer__nav-text"> Anuncios </span>
+            <span class="footer__nav-text"> Blog </span>
+            <span class="footer__nav-text"> Contacto </span>
+        </nav>
+        <span class="footer__nav-text-two">Todos los derechos reservados 2020 &copy;</span>
+    </footer>
+</body>
+
+</html>
