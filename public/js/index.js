@@ -1,11 +1,30 @@
+/**
+ * Variables globales
+ */
 let anuncios;
 let indiceRow;
+//"getElementById"
 let table = document.getElementById('table');
 let boxButtons = document.getElementById('box-buttons');
-let plantilla = document.getElementsByTagName('template')[0].content;
+let contentCheckbox = document.getElementById('contentCheckbox');
+let filtroTransaccion = document.getElementById('idFiltrarTransaccion');
+//"addEventListener"
+contentCheckbox.addEventListener("click", (event) => modifyCheckBok(event), false);
+filtroTransaccion.addEventListener("click", (event) => modifyfiltroTransaccion(event), false);
+//"Others" 
+let plantilla = document.getElementsByTagName('template');
 let fragmento = document.createDocumentFragment();
 let gif = document.getElementById('gif');
-
+let arrayData = [
+    { name: 'Id', class: 'idThTd', otherName: 'id' },
+    { name: 'Título', class: 'tituloThTd', otherName: 'titulo' },
+    { name: 'Transacción', class: 'transaccionThTd', otherName: 'transaccion' },
+    { name: 'Descripción', class: 'descripcionThTd', otherName: 'descripcion' },
+    { name: 'Precio', class: 'precioThTd', otherName: 'precio' },
+    { name: 'Numero Puertas', class: 'num_puertasThTd', otherName: 'num_puertas' },
+    { name: 'Numero Kms', class: 'num_kmsThTd', otherName: 'num_kms' },
+    { name: 'Potencia', class: 'potenciaThTd', otherName: 'potencia' }
+];
 
 /**
  * Ajax Traer
@@ -19,10 +38,8 @@ const traerAjax = async () => {
             gif.style.visibility = 'hidden';
             if (xhr.status === 200) {
                 anuncios = JSON.parse(xhr.responseText).data;
-                anuncios.forEach(element => {
-                    agregarRowTable(element);
-                });
-
+                agregarRowTableTh(arrayData);
+                agregarRowTableTd(anuncios);
                 table.appendChild(fragmento)
             } else {
                 console.log(xhr.status + " " + xhr.statusText);
@@ -31,7 +48,6 @@ const traerAjax = async () => {
     };
     xhr.open('GET', 'http://localhost:3000/traer', true);
     xhr.send();
-
 }
 
 /***
@@ -79,7 +95,6 @@ const modificarAjax = async (item) => {
     console.dir(JSON.stringify(item))
 }
 
-
 /***
  * Ajax baja
  */
@@ -102,26 +117,128 @@ const bajaAjax = async (id) => {
 }
 
 
+//-----Filtros Columnas--------//
 /**
- * agrega un renglon de la tabla
+ * Capturo el evento del checkbok seleccionado
+ *  * @param {*} event 
+ */
+const modifyCheckBok = (event) => {
+    let checkboxAux, newArrayData, checkboxAuxName, targetValue = event.target.value;
+
+    if (targetValue) {
+        checkboxAux = document.getElementById(targetValue);
+        switch (targetValue) {
+            case 'idCheck':
+                checkboxAuxName = { name: 'Id', position: 0, otherName: 'id' }
+                break;
+            case 'tituloCheck':
+                checkboxAuxName = { name: 'Título', position: 1, otherName: 'titulo' }
+                break;
+            case 'transaccionCheck':
+                checkboxAuxName = { name: 'Transacción', position: 2, otherName: 'transaccion' }
+                break;
+            case 'descripcionCheck':
+                checkboxAuxName = { name: 'Descripción', position: 3, otherName: 'descripcion' }
+                break;
+            case 'precioCheck':
+                checkboxAuxName = { name: 'Precio', position: 4, otherName: 'precio' }
+                break;
+            case 'numeroPuertasCheck':
+                checkboxAuxName = { name: 'Numero Puertas', position: 5, otherName: 'num_puertas' }
+                break;
+            case 'numeroKmsCheck':
+                checkboxAuxName = { name: 'Numero Kms', position: 6, otherName: 'num_kms' }
+                break;
+            case 'potenciaCheck':
+                checkboxAuxName = { name: 'Potencia', position: 7, otherName: 'potencia' }
+                break;
+            default:
+                break;
+        };
+        //saco columnas
+        if (checkboxAux.checked) {
+            newArrayData = arrayData.filter(item => item.name !== checkboxAuxName.name);
+            arrayData = newArrayData;
+        } else {
+            //agrego columnas
+            arrayData.splice(checkboxAuxName.position, 0, checkboxAuxName);
+        }
+        table.innerHTML = '';
+        agregarRowTableTh(arrayData)
+        agregarRowTableTd(anuncios, arrayData)
+    }
+}
+
+/**
+ * Filtro Transaccion 
+ */
+const modifyfiltroTransaccion = (event) => {
+    let cantidadAux = 0, precioAux = 0;
+
+    table.innerHTML = '';
+    agregarRowTableTh(arrayData);
+
+    Object.values(anuncios).forEach(anuncio => {
+        if (anuncio.transaccion === event.target.value) {
+            let tr = document.createElement("tr");
+            tr.setAttribute('onclick', "setIndex(this)");
+            precioAux += parseInt(anuncio.precio);
+            cantidadAux++;
+            Object.values(anuncio).forEach(item => {
+                let td = document.createElement('td');
+                td.innerHTML = item;
+                tr.appendChild(td)
+            })
+            table.appendChild(tr)
+        }
+    });
+    document.getElementById('promedio').value = (precioAux / cantidadAux);
+}
+
+/**
+ * agrega un renglon de la tabla (th),
+ *  al primer template
  * @param {renglon} element 
  */
-const agregarRowTable = (element) => {
-    let tr, td, copia;
+const agregarRowTableTh = (element) => {
+    let tr = document.createElement("tr");
+    element.forEach((item) => {
+        let th = document.createElement('th');
+        th.innerHTML = item.name;
+        tr.appendChild(th)
+    })
+    table.appendChild(tr)
+};
 
-    tr = plantilla.querySelector('tr');
-    tr.setAttribute('onclick', "setIndex(this)");
-    td = plantilla.querySelectorAll("td");
-    td[0].textContent = element.id;
-    td[1].textContent = element.titulo;
-    td[2].textContent = element.transaccion;
-    td[3].textContent = element.descripcion;
-    td[4].textContent = '$' + element.precio;
-    td[5].textContent = element.num_puertas;
-    td[6].textContent = element.num_kms;
-    td[7].textContent = element.potencia;
-    copia = document.importNode(plantilla, true);
-    fragmento.appendChild(copia);
+/**
+ * agrega un renglon a la tabla (td),
+ * al segundo template.
+ * @param {renglon} element 
+ */
+const agregarRowTableTd = (anuncios, arrayData) => {
+    if (arrayData) {
+        Object.values(anuncios).forEach(anuncio => {
+            let tr = document.createElement("tr");
+            tr.setAttribute('onclick', "setIndex(this)");
+            arrayData.forEach(any => {
+                let td = document.createElement('td');
+                td.innerHTML = anuncio[any.otherName];
+                tr.appendChild(td)
+            })
+            table.appendChild(tr)
+        })
+    } else {
+        anuncios.forEach(anuncio => {
+            let tr = document.createElement("tr");
+            tr.setAttribute('onclick', "setIndex(this)");
+            Object.values(anuncio).forEach(item => {
+                let td = document.createElement('td');
+                td.innerHTML = item;
+                tr.appendChild(td)
+            })
+            table.appendChild(tr)
+        })
+    }
 };
 
 traerAjax();
@@ -133,7 +250,7 @@ traerAjax();
  */
 setIndex = (e) => {
     boxButtons.style.visibility = 'visible';
-    indiceRow = e.rowIndex;
+    indiceRow = e.rowIndex - 1;
 };
 
 /**
@@ -158,27 +275,26 @@ const guardar = async (event) => {
     potencia = parseInt(document.getElementById("potencia").value);
 
     if (indiceRow) {
-        id = (anuncios[indiceRow - 1].id).toString();
+        id = (anuncios[indiceRow].id).toString();
         await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
     } else {
-        id = (anuncios.length + 1).toString();
-        await altaAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
     };
 }
 
 const borrar = async () => {
     boxButtons.style.visibility = 'hidden';
-    await bajaAjax(anuncios[indiceRow - 1].id);
+    await bajaAjax(anuncios[indiceRow].id);
 };
 
 const cancelar = () => {
     boxButtons.style.visibility = 'hidden';
-    indiceRow='';
+    indiceRow = '';
     document.getElementById('form').reset();
 };
 
 const editar = () => {
-    let auxIndice = indiceRow - 1;
+    let auxIndice = indiceRow;
     document.getElementById("titulo").value = anuncios[auxIndice].titulo;
     document.getElementById("transaccion").value = anuncios[auxIndice].transaccion;
     document.getElementById("descripcion").value = anuncios[auxIndice].descripcion;

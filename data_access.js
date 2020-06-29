@@ -54,7 +54,7 @@
                     array = JSON.parse(data);
                     let id = getID(array);
                     nuevoObjeto.id = id;
-
+                    console.log(id);
                     nuevoObjeto.active = "true";
 
                     array.push(nuevoObjeto);

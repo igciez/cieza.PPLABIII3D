@@ -144,6 +144,37 @@
     margin-left: 20%;
 }
 
+.content__filter{
+    width: 80vw;
+    height: 20vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: solid 1px;
+    border-radius: 10px;
+    background-color: grey;
+}
+
+.content__checkbox{
+    width: 74vw;
+    height: 15vh;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+}
+
+.content__checkbox-item{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 41%;
+}
+
+/* .content__checkbox-item-input{
+    margin-top: 46%;
+} */
+
 table {
     font-family: arial, sans-serif;
     border-collapse: collapse;
