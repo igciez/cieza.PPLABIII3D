@@ -1,13 +1,6 @@
 //Clases
-
 class Anuncio {
-    id: string;
-    titulo: string;
-    transaccion: string;
-    descripcion: string;
-    precio: string;
-
-    constructor(id: string, titulo: string, transaccion: string, descripcion: string, precio: string) {
+    constructor(id, titulo, transaccion, descripcion, precio) {
         this.id = id;
         this.titulo = titulo;
         this.transaccion = transaccion;
@@ -15,20 +8,15 @@ class Anuncio {
         this.precio = precio;
     }
 }
-
 class Anuncio_Auto extends Anuncio {
-    num_puertas: string;
-    num_kms: string;
-    potencia: string;
-
-    constructor(id: string, titulo: string, transaccion: string, descripcion: string, precio: string, numeroPuertas: string, numeroKms: string, potencia: string) {
+    constructor(id, titulo, transaccion, descripcion, precio, numeroPuertas, numeroKms, potencia) {
         super(id, titulo, transaccion, descripcion, precio);
         this.num_puertas = numeroPuertas;
         this.num_kms = numeroKms;
         this.potencia = potencia;
-    };
+    }
+    ;
 }
-
 /**
  * Variables globales
  */
@@ -56,14 +44,12 @@ let arrayData = [
     { name: 'Numero Kms', class: 'num_kmsThTd', otherName: 'num_kms' },
     { name: 'Potencia', class: 'potenciaThTd', otherName: 'potencia' }
 ];
-
 /**
  * Ajax Traer
  */
 const traerAjax = async () => {
     let xhr = new XMLHttpRequest();
     gif.style.visibility = 'visible';
-
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
             gif.style.visibility = 'hidden';
@@ -73,28 +59,28 @@ const traerAjax = async () => {
                 anuncios = auxAnuncios.map(item => new Anuncio_Auto(item.id, item.titulo, item.transaccion, item.descripcion, item.precio, item.num_puertas, item.num_kms, item.potencia));
                 agregarRowTableTh(arrayData);
                 agregarRowTableTd(anuncios, null);
-            } else {
+            }
+            else {
                 console.log(xhr.status + " " + xhr.statusText);
             }
         }
     };
     xhr.open('GET', 'http://localhost:3000/traer', true);
     xhr.send();
-}
-
+};
 /***
  * Ajax Alta
  */
 const altaAjax = async (item) => {
     let xhr = new XMLHttpRequest();
     gif.style.visibility = 'visible';
-
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
             gif.style.visibility = 'hidden';
             if (xhr.status === 200) {
-                console.log(JSON.parse(xhr.responseText))
-            } else {
+                console.log(JSON.parse(xhr.responseText));
+            }
+            else {
                 console.log(xhr.status + " " + xhr.statusText);
             }
         }
@@ -102,21 +88,20 @@ const altaAjax = async (item) => {
     xhr.open('POST', 'http://localhost:3000/alta');
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(item));
-}
-
+};
 /***
  * Ajax modificar
  */
 const modificarAjax = async (item) => {
     let xhr = new XMLHttpRequest();
     gif.style.visibility = 'visible';
-
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
             gif.style.visibility = 'hidden';
             if (xhr.status === 200) {
-                console.log(JSON.parse(xhr.responseText))
-            } else {
+                console.log(JSON.parse(xhr.responseText));
+            }
+            else {
                 console.log(xhr.status + " " + xhr.statusText);
             }
         }
@@ -124,21 +109,19 @@ const modificarAjax = async (item) => {
     xhr.open('POST', 'http://localhost:3000/modificar');
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send(JSON.stringify(item));
-    console.dir(JSON.stringify(item))
-}
-
+    console.dir(JSON.stringify(item));
+};
 /***
  * Ajax baja
  */
 const bajaAjax = async (id) => {
     let xhr = new XMLHttpRequest();
-
     xhr.onreadystatechange = () => {
         if (xhr.readyState === 4) {
-
             if (xhr.status === 200) {
-                console.log(JSON.parse(xhr.responseText))
-            } else {
+                console.log(JSON.parse(xhr.responseText));
+            }
+            else {
                 console.log(xhr.status + " " + xhr.statusText);
             }
         }
@@ -146,107 +129,101 @@ const bajaAjax = async (id) => {
     xhr.open('POST', 'http://localhost:3000/baja');
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.send(`id=${id}`);
-}
-
+};
 //----Local Storage-----
-
 const taerLocal = () => {
     anuncios = JSON.parse(localStorage.getItem('listaAnuncios'));
     console.dir(anuncios);
     if (anuncios) {
         agregarRowTableTh(arrayData);
         agregarRowTableTd(anuncios, null);
-    } else {
+    }
+    else {
         console.log('No hay Lista anuncios en LocalStorage');
     }
 };
-
 const altaLocal = (item) => {
     if (anuncios) {
-        anuncios.push(item)
-    } else {
-        anuncios = [item]
+        anuncios.push(item);
+    }
+    else {
+        anuncios = [item];
     }
     let auxRe = localStorage.setItem('listaAnuncios', JSON.stringify(anuncios));
-    console.dir(auxRe)
-    location.reload()
+    console.dir(auxRe);
+    location.reload();
 };
-
 const bajaLocal = (id) => {
     let auxAnuncio = anuncios.filter(item => item.id !== (id).toString());
-    console.dir(auxAnuncio)
+    console.dir(auxAnuncio);
     localStorage.setItem('listaAnuncios', JSON.stringify(auxAnuncio));
     //location.reload()
-    table.deleteRow(indiceRow)
+    table.deleteRow(indiceRow);
 };
-
 const modificarLocal = (item) => {
-    anuncios[indiceRow - 1] = item
+    anuncios[indiceRow - 1] = item;
     localStorage.setItem('listaAnuncios', JSON.stringify(anuncios));
-    location.reload()
-}
-
+    location.reload();
+};
 //-----Filtros Columnas--------//
 /**
  * Capturo el evento del checkbok seleccionado
- *  * @param {*} event 
+ *  * @param {*} event
  */
 const modifyCheckBok = (event) => {
     let checkboxAux, newArrayData, checkboxAuxName, targetValue = event.target.value;
-
     if (targetValue) {
         checkboxAux = document.getElementById(targetValue);
         switch (targetValue) {
             case 'idCheck':
-                checkboxAuxName = { name: 'Id', position: 0, otherName: 'id' }
+                checkboxAuxName = { name: 'Id', position: 0, otherName: 'id' };
                 break;
             case 'tituloCheck':
-                checkboxAuxName = { name: 'Título', position: 1, otherName: 'titulo' }
+                checkboxAuxName = { name: 'Título', position: 1, otherName: 'titulo' };
                 break;
             case 'transaccionCheck':
-                checkboxAuxName = { name: 'Transacción', position: 2, otherName: 'transaccion' }
+                checkboxAuxName = { name: 'Transacción', position: 2, otherName: 'transaccion' };
                 break;
             case 'descripcionCheck':
-                checkboxAuxName = { name: 'Descripción', position: 3, otherName: 'descripcion' }
+                checkboxAuxName = { name: 'Descripción', position: 3, otherName: 'descripcion' };
                 break;
             case 'precioCheck':
-                checkboxAuxName = { name: 'Precio', position: 4, otherName: 'precio' }
+                checkboxAuxName = { name: 'Precio', position: 4, otherName: 'precio' };
                 break;
             case 'numeroPuertasCheck':
-                checkboxAuxName = { name: 'Numero Puertas', position: 5, otherName: 'num_puertas' }
+                checkboxAuxName = { name: 'Numero Puertas', position: 5, otherName: 'num_puertas' };
                 break;
             case 'numeroKmsCheck':
-                checkboxAuxName = { name: 'Numero Kms', position: 6, otherName: 'num_kms' }
+                checkboxAuxName = { name: 'Numero Kms', position: 6, otherName: 'num_kms' };
                 break;
             case 'potenciaCheck':
-                checkboxAuxName = { name: 'Potencia', position: 7, otherName: 'potencia' }
+                checkboxAuxName = { name: 'Potencia', position: 7, otherName: 'potencia' };
                 break;
             default:
                 break;
-        };
+        }
+        ;
         //saco columnas
         if (checkboxAux.checked) {
             newArrayData = arrayData.filter(item => item.name !== checkboxAuxName.name);
             arrayData = newArrayData;
-        } else {
+        }
+        else {
             //agrego columnas
             arrayData.splice(checkboxAuxName.position, 0, checkboxAuxName);
         }
         table.innerHTML = '';
-        agregarRowTableTh(arrayData)
-        agregarRowTableTd(anuncios, arrayData)
+        agregarRowTableTh(arrayData);
+        agregarRowTableTd(anuncios, arrayData);
     }
-}
-
+};
 /**
- * Filtro Transaccion 
+ * Filtro Transaccion
  */
 const modifyfiltroTransaccion = (event) => {
     let cantidadAux = 0, precioAux = 0;
-
     table.innerHTML = '';
     agregarRowTableTh(arrayData);
-
     Object.values(anuncios).forEach(anuncio => {
         if (anuncio.transaccion === event.target.value) {
             let tr = document.createElement("tr");
@@ -256,33 +233,31 @@ const modifyfiltroTransaccion = (event) => {
             Object.values(anuncio).forEach(item => {
                 let td = document.createElement('td');
                 td.innerHTML = item;
-                tr.appendChild(td)
-            })
-            table.appendChild(tr)
+                tr.appendChild(td);
+            });
+            table.appendChild(tr);
         }
     });
     document.getElementById('promedio').value = (precioAux / cantidadAux);
-}
-
+};
 /**
  * agrega un renglon de la tabla (th),
  *  al primer template
- * @param {renglon} element 
+ * @param {renglon} element
  */
 const agregarRowTableTh = (element) => {
     let tr = document.createElement("tr");
     element.forEach((item) => {
         let th = document.createElement('th');
         th.innerHTML = item.name;
-        tr.appendChild(th)
-    })
-    table.appendChild(tr)
+        tr.appendChild(th);
+    });
+    table.appendChild(tr);
 };
-
 /**
  * agrega un renglon a la tabla (td),
  * al segundo template.
- * @param {renglon} element 
+ * @param {renglon} element
  */
 const agregarRowTableTd = (anuncios, arrayData) => {
     if (arrayData) {
@@ -292,49 +267,42 @@ const agregarRowTableTd = (anuncios, arrayData) => {
             arrayData.forEach(any => {
                 let td = document.createElement('td');
                 td.innerHTML = anuncio[any.otherName];
-                tr.appendChild(td)
-            })
-            table.appendChild(tr)
-        })
-    } else {
+                tr.appendChild(td);
+            });
+            table.appendChild(tr);
+        });
+    }
+    else {
         anuncios.forEach(anuncio => {
             let tr = document.createElement("tr");
             tr.setAttribute('onclick', "setIndex(this)");
             Object.values(anuncio).forEach(item => {
                 let td = document.createElement('td');
                 td.innerHTML = item;
-                tr.appendChild(td)
-            })
-            table.appendChild(tr)
-        })
+                tr.appendChild(td);
+            });
+            table.appendChild(tr);
+        });
     }
 };
-
 traerAjax();
 //taerLocal()
-
 /**
- * Setea el indice "indiceRow" y 
+ * Setea el indice "indiceRow" y
  * da visibilidad a los botones editar, eliminar y cancelar
- * @param {evento que proviene del onclick(this)} e 
+ * @param {evento que proviene del onclick(this)} e
  */
 const setIndex = (e) => {
     boxButtons.style.visibility = 'visible';
     indiceRow = e.rowIndex;
 };
-
 /**
  * Guardar en Base de datos
- * @param {*} event 
+ * @param {*} event
  */
 const guardar = async (event) => {
-
     event.preventDefault();
-
-    let titulo, transaccion, auxTransaccion, descripcion,
-        precio, num_puertas, num_kms, potencia,
-        id;
-
+    let titulo, transaccion, auxTransaccion, descripcion, precio, num_puertas, num_kms, potencia, id;
     titulo = document.getElementById("titulo").value;
     auxTransaccion = document.getElementById("transaccion");
     transaccion = auxTransaccion.options[auxTransaccion.selectedIndex].value;
@@ -343,31 +311,29 @@ const guardar = async (event) => {
     num_puertas = parseInt(document.getElementById("puertas").value);
     num_kms = parseInt(document.getElementById("kms").value);
     potencia = parseInt(document.getElementById("potencia").value);
-
     if (indiceRow) {
         id = (anuncios[indiceRow - 1].id).toString();
-        console.log('entra al modificar?')
-        await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        console.log('entra al modificar?');
+        await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia });
         //modificarLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
-    } else {
-        await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+    }
+    else {
+        await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia });
         //id = (anuncios ? (anuncios.length + 1) : 1).toString();
         //altaLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
-    };
-}
-
+    }
+    ;
+};
 const borrar = async () => {
     boxButtons.style.visibility = 'hidden';
     //await bajaAjax(anuncios[indiceRow-1].id);
-    bajaLocal(anuncios[indiceRow - 1].id)
+    bajaLocal(anuncios[indiceRow - 1].id);
 };
-
 const cancelar = () => {
     boxButtons.style.visibility = 'hidden';
     indiceRow = '';
     document.getElementById('form').reset();
 };
-
 const editar = () => {
     let auxIndice = indiceRow - 1;
     document.getElementById("titulo").value = anuncios[auxIndice].titulo;

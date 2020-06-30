@@ -17,14 +17,14 @@ class Anuncio {
 }
 
 class Anuncio_Auto extends Anuncio {
-    numeroPuertas;
-    numeroKms;
+    num_puertas;
+    num_kms;
     potencia;
 
     constructor(id, titulo, transaccion, descripcion, precio, numeroPuertas, numeroKms, potencia) {
         super(id, titulo, transaccion, descripcion, precio);
-        this.numeroPuertas = numeroPuertas;
-        this.numeroKms = numeroKms;
+        this.num_puertas = numeroPuertas;
+        this.num_kms = numeroKms;
         this.potencia = potencia;
     };
 }
@@ -69,15 +69,12 @@ const traerAjax = async () => {
             gif.style.visibility = 'hidden';
             if (xhr.status === 200) {
                 let auxAnuncios = JSON.parse(xhr.responseText).data;
-                //console.dir(anuncios);
-                // let anuncioOtro = new Anuncio_Auto();
-                anuncios = new Anuncio_Auto();
-                auxAnuncios.forEach((item) => anuncios={
-                    id: item.id
-                })
-                console.dir(anuncios)
-                //agregarRowTableTh(arrayData);
-                //agregarRowTableTd(anuncios);
+                console.dir(auxAnuncios);
+                anuncios = auxAnuncios.map(item => new Anuncio_Auto(item.id, item.titulo, item.transaccion, item.descripcion, item.precio, item.num_puertas, item.num_kms, item.potencia));
+                console.dir(anuncios);
+                //anuncios = JSON.parse(xhr.responseText).data;
+                agregarRowTableTh(arrayData);
+                agregarRowTableTd(anuncios);
                 //table.appendChild(fragmento)
             } else {
                 console.log(xhr.status + " " + xhr.statusText);
@@ -292,7 +289,7 @@ const agregarRowTableTh = (element) => {
  */
 const agregarRowTableTd = (anuncios, arrayData) => {
     if (arrayData) {
-        Object.values(anuncios).forEach(anuncio => {
+        anuncios.forEach(anuncio => {
             let tr = document.createElement("tr");
             tr.setAttribute('onclick', "setIndex(this)");
             arrayData.forEach(any => {
@@ -353,12 +350,12 @@ const guardar = async (event) => {
     if (indiceRow) {
         id = (anuncios[indiceRow - 1].id).toString();
         console.log('entra al modificar?')
-        //await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
-        modificarLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        //modificarLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
     } else {
-        //await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
-        id = (anuncios ? (anuncios.length + 1) : 1).toString();
-        altaLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        //id = (anuncios ? (anuncios.length + 1) : 1).toString();
+        //altaLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
     };
 }
 
