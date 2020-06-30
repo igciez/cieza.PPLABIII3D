@@ -1,3 +1,34 @@
+//Clases
+
+class Anuncio {
+    id;
+    titulo;
+    transaccion;
+    descripcion;
+    precio;
+
+    constructor(id, titulo, transaccion, descripcion, precio) {
+        this.id = id;
+        this.titulo = titulo;
+        this.transaccion = transaccion;
+        this.descripcion = descripcion;
+        this.precio = precio;
+    }
+}
+
+class Anuncio_Auto extends Anuncio {
+    numeroPuertas;
+    numeroKms;
+    potencia;
+
+    constructor(id, titulo, transaccion, descripcion, precio, numeroPuertas, numeroKms, potencia) {
+        super(id, titulo, transaccion, descripcion, precio);
+        this.numeroPuertas = numeroPuertas;
+        this.numeroKms = numeroKms;
+        this.potencia = potencia;
+    };
+}
+
 /**
  * Variables globales
  */
@@ -12,8 +43,8 @@ let filtroTransaccion = document.getElementById('idFiltrarTransaccion');
 contentCheckbox.addEventListener("click", (event) => modifyCheckBok(event), false);
 filtroTransaccion.addEventListener("click", (event) => modifyfiltroTransaccion(event), false);
 //"Others" 
-let plantilla = document.getElementsByTagName('template');
-let fragmento = document.createDocumentFragment();
+// let plantilla = document.getElementsByTagName('template');
+// let fragmento = document.createDocumentFragment();
 let gif = document.getElementById('gif');
 let arrayData = [
     { name: 'Id', class: 'idThTd', otherName: 'id' },
@@ -37,10 +68,17 @@ const traerAjax = async () => {
         if (xhr.readyState === 4) {
             gif.style.visibility = 'hidden';
             if (xhr.status === 200) {
-                anuncios = JSON.parse(xhr.responseText).data;
-                agregarRowTableTh(arrayData);
-                agregarRowTableTd(anuncios);
-                table.appendChild(fragmento)
+                let auxAnuncios = JSON.parse(xhr.responseText).data;
+                //console.dir(anuncios);
+                // let anuncioOtro = new Anuncio_Auto();
+                anuncios = new Anuncio_Auto();
+                auxAnuncios.forEach((item) => anuncios={
+                    id: item.id
+                })
+                console.dir(anuncios)
+                //agregarRowTableTh(arrayData);
+                //agregarRowTableTd(anuncios);
+                //table.appendChild(fragmento)
             } else {
                 console.log(xhr.status + " " + xhr.statusText);
             }
@@ -116,6 +154,43 @@ const bajaAjax = async (id) => {
     xhr.send(`id=${id}`);
 }
 
+//----Local Storage-----
+
+const taerLocal = () => {
+    anuncios = JSON.parse(localStorage.getItem('listaAnuncios'));
+    console.dir(anuncios);
+    if (anuncios) {
+        agregarRowTableTh(arrayData);
+        agregarRowTableTd(anuncios);
+    } else {
+        console.log('No hay Lista anuncios en LocalStorage');
+    }
+};
+
+const altaLocal = (item) => {
+    if (anuncios) {
+        anuncios.push(item)
+    } else {
+        anuncios = [item]
+    }
+    let auxRe = localStorage.setItem('listaAnuncios', JSON.stringify(anuncios));
+    console.dir(auxRe)
+    location.reload()
+};
+
+const bajaLocal = (id) => {
+    let auxAnuncio = anuncios.filter(item => item.id !== (id).toString());
+    console.dir(auxAnuncio)
+    localStorage.setItem('listaAnuncios', JSON.stringify(auxAnuncio));
+    //location.reload()
+    table.deleteRow(indiceRow)
+};
+
+const modificarLocal = (item) => {
+    anuncios[indiceRow - 1] = item
+    localStorage.setItem('listaAnuncios', JSON.stringify(anuncios));
+    location.reload()
+}
 
 //-----Filtros Columnas--------//
 /**
@@ -242,15 +317,16 @@ const agregarRowTableTd = (anuncios, arrayData) => {
 };
 
 traerAjax();
+//taerLocal()
 
 /**
  * Setea el indice "indiceRow" y 
  * da visibilidad a los botones editar, eliminar y cancelar
  * @param {evento que proviene del onclick(this)} e 
  */
-setIndex = (e) => {
+const setIndex = (e) => {
     boxButtons.style.visibility = 'visible';
-    indiceRow = e.rowIndex - 1;
+    indiceRow = e.rowIndex;
 };
 
 /**
@@ -275,16 +351,21 @@ const guardar = async (event) => {
     potencia = parseInt(document.getElementById("potencia").value);
 
     if (indiceRow) {
-        id = (anuncios[indiceRow].id).toString();
-        await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        id = (anuncios[indiceRow - 1].id).toString();
+        console.log('entra al modificar?')
+        //await modificarAjax({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        modificarLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
     } else {
-        await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        //await altaAjax({ id: null, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
+        id = (anuncios ? (anuncios.length + 1) : 1).toString();
+        altaLocal({ id, titulo, transaccion, descripcion, precio, num_puertas, num_kms, potencia })
     };
 }
 
 const borrar = async () => {
     boxButtons.style.visibility = 'hidden';
-    await bajaAjax(anuncios[indiceRow].id);
+    //await bajaAjax(anuncios[indiceRow-1].id);
+    bajaLocal(anuncios[indiceRow - 1].id)
 };
 
 const cancelar = () => {
@@ -294,7 +375,7 @@ const cancelar = () => {
 };
 
 const editar = () => {
-    let auxIndice = indiceRow;
+    let auxIndice = indiceRow - 1;
     document.getElementById("titulo").value = anuncios[auxIndice].titulo;
     document.getElementById("transaccion").value = anuncios[auxIndice].transaccion;
     document.getElementById("descripcion").value = anuncios[auxIndice].descripcion;
