@@ -178,8 +178,11 @@ const taerLocal = () => {
     filtroCheckPref = auxFiltros;
 
     if (auxFiltros) {
+        console.dir(auxFiltros)
         auxFiltros.forEach(item => {
-            document.getElementById(item.nameId).checked = item.checked;
+            console.dir(item.checked)
+            //document.getElementById(item.nameId).checked = item.checked;
+            document.getElementById(item.nameId).checked =false;
         });
     }
 };
