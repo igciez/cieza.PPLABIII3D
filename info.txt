@@ -1,0 +1,9 @@
+------
+Hacer:
+------
+
+1)jQuery ---> Listo!!!
+
+2)filtros checkboxs
+
+3)Sort de columnas tabla
